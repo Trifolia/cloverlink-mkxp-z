@@ -715,6 +715,8 @@ struct InputPrivate
     double last_update;
 
     int vScrollDistance;
+
+    bool triedExit;
     
     struct
     {
@@ -782,6 +784,8 @@ struct InputPrivate
         dir8Data.active = 0;
         
         vScrollDistance = 0;
+
+        triedExit = false;
     }
     
     inline ButtonState &getStateCheck(int code)
@@ -1256,6 +1260,10 @@ void Input::update()
     
     /* Fetch new cumulative scroll distance and reset counter */
     p->vScrollDistance = SDL_AtomicSet(&EventThread::verticalScrollDistance, 0);
+
+    RGSSThreadData &rtData = shState->rtData();
+	p->triedExit = rtData.triedExit;
+	rtData.triedExit.clear();
     
     p->last_update = shState->runTime();
 }
@@ -1523,6 +1531,11 @@ const char *Input::getButtonName(SDL_GameControllerButton button) {
         return "Invalid";
     
     return buttonNames[button];
+}
+
+bool Input::hasQuit()
+{
+	return p->triedExit;
 }
 
 Input::~Input()

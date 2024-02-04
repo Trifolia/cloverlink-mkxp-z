@@ -531,6 +531,13 @@ RB_METHOD(inputSetClipboard) {
     return str;
 }
 
+RB_METHOD(inputQuit)
+{
+	RB_UNUSED_PARAM;
+
+	return rb_bool_new(shState->input().hasQuit());
+}
+
 struct {
     const char *str;
     Input::ButtonCode val;
@@ -615,6 +622,8 @@ void inputBindingInit() {
     
     _rb_define_module_function(module, "clipboard", inputGetClipboard);
     _rb_define_module_function(module, "clipboard=", inputSetClipboard);
+
+	_rb_define_module_function(module, "quit?", inputQuit);
     
     if (rgssVer >= 3) {
         VALUE symHash = rb_hash_new();

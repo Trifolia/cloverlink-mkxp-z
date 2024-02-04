@@ -104,6 +104,8 @@ void CUSLBindingInit();
 
 void httpBindingInit();
 
+void oneshotBindingInit();
+
 RB_METHOD(mkxpDelta);
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
@@ -184,6 +186,8 @@ static void mriBindingInit() {
 #endif
     
     httpBindingInit();
+
+    oneshotBindingInit();
     
     if (rgssVer >= 3) {
         _rb_define_module_function(rb_mKernel, "rgss_main", mriRgssMain);
@@ -1239,6 +1243,11 @@ static void mriBindingExecute() {
         showExc(exc, btData);
     
     ruby_cleanup(0);
+
+	// Force allow exit
+	shState->rtData().allowExit.set();
+
+	// Request EventThread termination
     
     shState->rtData().rqTermAck.set();
 }

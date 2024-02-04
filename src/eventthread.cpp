@@ -292,7 +292,11 @@ void EventThread::process(RGSSThreadData &rtData)
                         break;
                         
                     case SDL_WINDOWEVENT_CLOSE :
-                        terminate = true;
+						if (rtData.allowExit) {
+							terminate = true;
+						} else {
+							rtData.triedExit.set();
+						}
                         
                         break;
                         
@@ -320,8 +324,12 @@ void EventThread::process(RGSSThreadData &rtData)
                 break;
                 
             case SDL_QUIT :
-                terminate = true;
-                Debug() << "EventThread termination requested";
+			    if (rtData.allowExit) {
+					terminate = true;
+					Debug() << "EventThread termination requested";
+				} else {
+					rtData.triedExit.set();
+				}
                 
                 break;
                 

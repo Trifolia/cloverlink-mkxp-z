@@ -22,6 +22,7 @@
 #ifndef SHAREDSTATE_H
 #define SHAREDSTATE_H
 
+#include "oneshot/oneshot.h"
 #include "sigslot/signal.hpp"
 
 #define shState SharedState::instance
@@ -51,6 +52,8 @@ struct Config;
 struct Vec2i;
 struct SharedMidiState;
 
+class Oneshot; 
+
 struct SharedState
 {
 	void *bindingData() const;
@@ -71,6 +74,7 @@ struct SharedState
 	Input &input() const;
 	Audio &audio() const;
 
+	Oneshot &oneshot() const;
 	GLState &_glState() const;
 
 	ShaderSet &shaders() const;

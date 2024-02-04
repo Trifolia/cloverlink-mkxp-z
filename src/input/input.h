@@ -116,6 +116,8 @@ public:
     const char *getAxisName(SDL_GameControllerAxis axis);
     const char *getButtonName(SDL_GameControllerButton button);
 
+    bool hasQuit();
+
 private:
 	Input(const RGSSThreadData &rtData);
 	~Input();

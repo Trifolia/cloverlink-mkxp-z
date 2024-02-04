@@ -247,6 +247,15 @@ struct RGSSThreadData
     // Set when window is being adjusted (resize, reposition)
     AtomicFlag rqWindowAdjust;
 
+		/* True if we're currently exiting */
+	AtomicFlag exiting;
+
+	/* True if exiting is allowed */
+	AtomicFlag allowExit;
+
+	/* Set when attempting to exit and allowExit is false */
+	AtomicFlag triedExit;
+
 	EventThread *ethread;
 	UnidirMessage<Vec2i> windowSizeMsg;
     UnidirMessage<Vec2i> drawableSizeMsg;
