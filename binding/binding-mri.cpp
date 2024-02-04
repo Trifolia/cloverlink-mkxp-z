@@ -1115,8 +1115,13 @@ static void mriBindingExecute() {
     
     RUBY_INIT_STACK;
     ruby_init();
+
+    // Add the proper load paths. It needs to be added to $LOAD_PATH, otherwise encodings won't load..?
+    rb_eval_string(
+        "$LOAD_PATH.unshift(File.join(Dir.pwd, 'lib', 'ruby'))\n"
+        "$LOAD_PATH.unshift(File.join(Dir.pwd, 'lib', 'ruby', RUBY_PLATFORM))\n");
     
-    std::vector<const char*> rubyArgsC{"mkxp-z"};
+    std::vector<const char*> rubyArgsC{"cloverlink"};
     rubyArgsC.push_back("-e ");
     void *node;
     if (conf.jit.enabled) {
@@ -1191,7 +1196,6 @@ static void mriBindingExecute() {
     rb_funcall(rbArgv, rb_intern("uniq!"), 0);
     
     VALUE lpaths = rb_gv_get(":");
-    rb_ary_clear(lpaths);
     
 #if defined(MKXPZ_BUILD_XCODE) && RAPI_MAJOR >= 2
     std::string resPath = mkxp_fs::getResourcePath();

@@ -43,14 +43,14 @@
 
 #ifndef MKXPZ_BUILD_XCODE
 #ifndef MKXPZ_CJK_FONT
-#include "liberation.ttf.xxd"
+#include "terminus.ttf.xxd"
 #else
 #include "wqymicrohei.ttf.xxd"
 #endif
 
 
 #ifndef MKXPZ_CJK_FONT
-#define BUNDLED_FONT liberation
+#define BUNDLED_FONT terminus
 #else
 #define BUNDLED_FONT wqymicrohei
 #endif
@@ -215,7 +215,9 @@ _TTF_Font *SharedFontState::getFont(std::string family,
 	// FIXME 0.9 is guesswork at this point
 //	float gamma = (96.0/45.0)*(5.0/14.0)*(size-5);
 //	font = TTF_OpenFontRW(ops, 1, gamma /** .90*/);
-	font = TTF_OpenFontRW(ops, 1, size* 0.90f);
+//	font = TTF_OpenFontRW(ops, 1, size* 0.90f);
+
+	font = TTF_OpenFontRW(ops, 1, size); //! OneShot variant
 
 	if (!font)
 		throw Exception(Exception::SDLError, "%s", SDL_GetError());

@@ -75,3 +75,4 @@ DerivedData/
 
 ## Gcc Patch
 /*.gcno
+/.cache/

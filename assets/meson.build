@@ -6,7 +6,7 @@ embedded_assets = [
 if get_option('cjk_fallback_font') == true
     embedded_assets += 'wqymicrohei.ttf'
 else
-    embedded_assets += 'liberation.ttf'
+    embedded_assets += 'terminus.ttf'
 endif
 
 embedded_assets_f = files(embedded_assets)

@@ -38,7 +38,7 @@
 #include <algorithm>
 #include <assert.h>
 
-const Vec2i winSize(840, 356);
+const Vec2i winSize(700, 500);
 
 const uint8_t cBgNorm = 50;
 const uint8_t cBgDark = 20;
@@ -46,7 +46,7 @@ const uint8_t cLine = 0;
 const uint8_t cText = 255;
 
 const uint8_t frameWidth = 4;
-const uint8_t fontSize = 15;
+const uint8_t fontSize = 12;
 
 static bool pointInRect(const SDL_Rect &r, int x, int y)
 {
@@ -64,17 +64,18 @@ struct VButton
 } static vButtons[] =
 {
 	BTN_STRING(Up),
-	BTN_STRING(Down),
-	BTN_STRING(L),
 	BTN_STRING(Left),
+	BTN_STRING(Action),
+	BTN_STRING(Cancel),
+  BTN_STRING(Menu),
+	BTN_STRING(L),
+
+	BTN_STRING(Down),
 	BTN_STRING(Right),
+	BTN_STRING(Run),
+	BTN_STRING(Deactivate),
+  BTN_STRING(Items),
 	BTN_STRING(R),
-	BTN_STRING(A),
-	BTN_STRING(B),
-  BTN_STRING(C),
-	BTN_STRING(X),
-	BTN_STRING(Y),
-  BTN_STRING(Z)
 };
 
 static elementsN(vButtons);
@@ -410,8 +411,14 @@ struct SettingsMenuPrivate
 		else
 		{
 			dstRect.w = alignW;
-			dstRect.x = x;
-			SDL_BlitScaled(txtSurf, 0, surf, &dstRect);
+			dstRect.x = drawOff.x + x;
+
+			SDL_Rect srcRect;
+			srcRect.x = 0;
+			srcRect.y = 0;
+			srcRect.w = dstRect.w;
+			srcRect.h = txtSurf->h;
+			SDL_BlitSurface(txtSurf, &srcRect, surf, &dstRect);
 		}
 	}
 
@@ -727,7 +734,7 @@ void Widget::click(int x, int y, uint8_t button)
 }
 
 /* Ratio of cell area to total widget width */
-#define BW_CELL_R 0.55f
+#define BW_CELL_R 0.75f
 
 void BindingWidget::drawHandler(SDL_Surface *surf)
 {
@@ -911,20 +918,6 @@ void Label::drawHandler(SDL_Surface *surf)
 
 SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 {
-    // Set names to be shown in the menu
-    {
-#define SET_BUTTON_NAME(n, b) vButtons[n].str = rtData.config.kbActionNames.b.c_str();
-        SET_BUTTON_NAME(2, l);
-        SET_BUTTON_NAME(5, r);
-        SET_BUTTON_NAME(6, a);
-        SET_BUTTON_NAME(7, b);
-        SET_BUTTON_NAME(8, c);
-        SET_BUTTON_NAME(9, x);
-        SET_BUTTON_NAME(10, y);
-        SET_BUTTON_NAME(11, z);
-#undef SET_BUTTON_NAME
-    }
-    
 	p = new SettingsMenuPrivate(rtData);
 	p->state = Idle;
 
@@ -941,18 +934,18 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 
 	p->rgb = p->winSurf->format;
 
-	const size_t layoutW = 4;
-	const size_t layoutH = 3;
+	const size_t layoutW = 2;
+	const size_t layoutH = 6;
 	assert(layoutW*layoutH == vButtonsN);
 
-	const int bWidgetW = winSize.x / layoutH;
+	const int bWidgetW = winSize.x / layoutW;
 	const int bWidgetH = 64;
-	const int bWidgetY = winSize.y - layoutW*bWidgetH - 48;
+	const int bWidgetY = winSize.y - layoutH*bWidgetH - 48;
 
-	for (int y = 0; y < 4; ++y)
-		for (int x = 0; x < 3; ++x)
+	for (int y = 0; y < (int)layoutH; ++y)
+		for (int x = 0; x < (int)layoutW; ++x)
 		{
-			int i = y*3+x;
+			int i = x*layoutH+y;
 			BindingWidget w(i, p, IntRect(x*bWidgetW, bWidgetY+y*bWidgetH,
 			                              bWidgetW, bWidgetH));
 			p->bWidgets.push_back(w);
@@ -971,9 +964,9 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 
 	IntRect btRects[] =
 	{
-	    IntRect(16, buttonY, 112, buttonH),
-	    IntRect(winSize.x-16-64*2-8, buttonY, 64, buttonH),
-	    IntRect(winSize.x-16-64, buttonY, 64, buttonH)
+	    IntRect(16, buttonY, 220, buttonH),
+	    IntRect(winSize.x-16-80*2-8, buttonY, 80, buttonH),
+	    IntRect(winSize.x-16-80, buttonY, 80, buttonH)
 	};
 
 	p->buttons.push_back(Button(p, btRects[0], "Reset defaults", &SMP::onResetToDefault));
@@ -985,10 +978,10 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 
 	/* Labels */
 	const char *info = "Use left click to bind a slot, right click to clear its binding";
-	p->infoLabel = Label(p, IntRect(16, 6, winSize.x, 16), info, cText, cText, cText);
+	p->infoLabel = Label(p, IntRect(16, 16, winSize.x - 32, 16), info, cText, cText, cText);
 
-	const char *warn = "Warning: Same physical key bound to multiple slots";
-	p->dupWarnLabel = Label(p, IntRect(16, 26, winSize.x, 16), warn, 255, 0, 0);
+	const char *warn = "Warning: Same physical action bound to multiple slots";
+	p->dupWarnLabel = Label(p, IntRect(16, 40, winSize.x - 32, 16), warn, 255, 0, 0);
 
 	p->widgets.push_back(&p->infoLabel);
 	p->widgets.push_back(&p->dupWarnLabel);

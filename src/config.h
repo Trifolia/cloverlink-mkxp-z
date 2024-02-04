@@ -145,14 +145,14 @@ struct Config {
 
     // Keybinding action name mappings
     struct {
-        std::string a;
-        std::string b;
-        std::string c;
-        
-        std::string x;
-        std::string y;
-        std::string z;
-        
+        std::string action;
+        std::string cancel;
+        std::string menu;
+        std::string items;
+
+        std::string run;
+        std::string deactivate;
+
         std::string l;
         std::string r;
     } kbActionNames;

@@ -3,7 +3,7 @@
 #include "resource.h"
 
 IDI_APPICON ICON "icon.ico"
-IDI_MANIFEST RT_MANIFEST "mkxpz.manifest"
+IDI_MANIFEST RT_MANIFEST "cloverlink.manifest"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION    2,4,2,0
@@ -14,8 +14,8 @@ BLOCK "StringFileInfo"
 BLOCK "040904b0"
 {
 VALUE "FileVersion",        "2.4.2\0"
-VALUE "OriginalFilename",   "mkxp-z.exe\0"
-VALUE "ProductName",        "mkxp-z\0"
+VALUE "OriginalFilename",   "cloverlink.exe\0"
+VALUE "ProductName",        "cloverlink\0"
 VALUE "ProductVersion",     "2.4.2\0"
 }
 }

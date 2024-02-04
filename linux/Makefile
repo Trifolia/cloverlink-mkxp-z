@@ -41,9 +41,9 @@ CMAKE_ARGS := \
 
 # TODO: Check if we can disable rubygems, remove prefixes.
 RUBY_CONFIGURE_ARGS := \
-	--enable-install-static-library \
 	--enable-shared \
 	--disable-install-doc \
+# --enable-install-static-library \
 	--with-out-ext=openssl,readline,dbm,gdbm \
 	--with-static-linked-ext \
 	--disable-rubygems \

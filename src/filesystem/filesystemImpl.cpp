@@ -45,11 +45,13 @@ std::string filesystemImpl::contentsOfFileAsString(const char *path) {
 // chdir and getcwd do not support unicode on Windows
 bool filesystemImpl::setCurrentDirectory(const char *path) {
     fs::path stdPath(path);
+    // store the original path
+    auto originalPath = fs::current_path();
     fs::current_path(stdPath);
     bool ret;
 
     try {
-        ret = fs::equivalent(fs::current_path(), stdPath);
+        ret = fs::equivalent(fs::current_path(), originalPath.append(stdPath));
     } catch (...) {
         Debug() << "Failed to check current path." << path;
         ret = false;
