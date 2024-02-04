@@ -1,3 +1,8 @@
+### What is this?
+
+This is a fork of mkxp-z partially reimplementing functionality from modshot/mkxp-oneshot. 
+Some behavior is left unimplemented because cloverlink doesn't need it.
+
 # mkxp-z
 
 <p align="center"><b>
