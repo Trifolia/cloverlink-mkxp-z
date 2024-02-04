@@ -83,6 +83,21 @@ RB_METHOD(audio_##entity##Fade) \
 		return rb_float_new(shState->audio().entity##Pos()); \
 	}
 
+#define DEF_AUD_PROP_I(PropName) \
+	RB_METHOD(audio##Get##PropName) \
+	{ \
+		RB_UNUSED_PARAM; \
+		return rb_fix_new(shState->audio().get##PropName()); \
+	} \
+	RB_METHOD(audio##Set##PropName) \
+	{ \
+		RB_UNUSED_PARAM; \
+		int value; \
+		rb_get_args(argc, argv, "i", &value RB_ARG_END); \
+		shState->audio().set##PropName(value); \
+		return rb_fix_new(value); \
+	}
+
 // DEF_PLAY_STOP_POS( bgm )
 
 #define MAYBE_NIL_TRACK(t) t == Qnil ? -127 : NUM2INT(t)
@@ -175,6 +190,8 @@ RB_METHOD(audioReset)
 	return Qnil;
 }
 
+DEF_AUD_PROP_I(GlobalBGM_Volume)
+DEF_AUD_PROP_I(GlobalSFX_Volume)
 
 #define BIND_PLAY_STOP(entity) \
 	_rb_define_module_function(module, #entity "_play", audio_##entity##Play); \
@@ -190,6 +207,11 @@ RB_METHOD(audioReset)
 #define BIND_POS(entity) \
 	_rb_define_module_function(module, #entity "_pos", audio_##entity##Pos);
 
+#define INIT_AUD_PROP_BIND(PropName, prop_name_s) \
+{ \
+	_rb_define_module_function(module, prop_name_s, audio##Get##PropName); \
+	_rb_define_module_function(module, prop_name_s "=", audio##Set##PropName); \
+}
 
 void
 audioBindingInit()
@@ -210,4 +232,7 @@ audioBindingInit()
 	BIND_PLAY_STOP( se )
 
 	_rb_define_module_function(module, "__reset__", audioReset);
+
+	INIT_AUD_PROP_BIND( GlobalBGM_Volume, "global_bgm_volume" );
+	INIT_AUD_PROP_BIND( GlobalSFX_Volume, "global_sfx_volume" );
 }

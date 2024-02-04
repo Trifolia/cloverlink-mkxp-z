@@ -22,6 +22,8 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+#include "util.h"
+
 /* Concerning the 'pos' parameter:
  *   RGSS3 actually doesn't specify a format for this,
  *   it's only implied that it is a numerical value
@@ -69,6 +71,9 @@ public:
 	void setupMidi();
 	float bgmPos(int track = 0);
 	float bgsPos();
+
+	DECL_ATTR(GlobalBGM_Volume, int);
+	DECL_ATTR(GlobalSFX_Volume, int);
 
 	void reset();
 

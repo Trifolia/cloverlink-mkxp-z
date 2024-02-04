@@ -22,6 +22,7 @@
 #include "audio.h"
 
 #include "audiostream.h"
+#include "debugwriter.h"
 #include "soundemitter.h"
 #include "sharedstate.h"
 #include "sharedmidistate.h"
@@ -37,6 +38,8 @@
 
 struct AudioPrivate
 {
+		int global_bgm_volume;
+		int global_sfx_volume;
     
     std::vector<AudioStream*> bgmTracks;
 	AudioStream bgs;
@@ -75,6 +78,9 @@ struct AudioPrivate
 	      syncPoint(rtData.syncPoint),
           volumeRatio(1)
 	{
+		global_bgm_volume = 100;
+		global_sfx_volume = 100;
+
         for (int i = 0; i < rtData.config.BGM.trackCount; i++) {
             std::string id = std::string("bgm" + std::to_string(i));
             bgmTracks.push_back(new AudioStream(ALStream::Looped, id.c_str()));
@@ -305,7 +311,8 @@ void Audio::bgmPlay(const char *filename,
         
         track = 0;
     }
-	p->getTrackByIndex(track)->play(filename, volume, pitch, pos);
+
+	p->getTrackByIndex(track)->play(filename, (volume * p->global_bgm_volume) / 100, pitch, pos);
 }
 
 void Audio::bgmStop(int track)
@@ -334,15 +341,19 @@ void Audio::bgmFade(int time, int track)
 
 int Audio::bgmGetVolume(int track)
 {
+	  int track_volume;
     if (track == -127)
-        return p->bgmTracks[0]->getVolume(AudioStream::BaseRatio) * 100;
-    
-    return p->getTrackByIndex(track)->getVolume(AudioStream::Base) * 100;
+        track_volume =  p->bgmTracks[0]->getVolume(AudioStream::BaseRatio) * 100;
+    else 
+    	track_volume =p->getTrackByIndex(track)->getVolume(AudioStream::Base) * 100;
+
+		// inverse of calculation we perform when playing a track
+		return (track_volume * 100 / p->global_bgm_volume);
 }
 
 void Audio::bgmSetVolume(int volume, int track)
 {
-    float vol = volume / 100.0;
+    float vol = (volume * p->global_bgm_volume) / 100.0;
     if (track == -127) {
         for (auto track : p->bgmTracks)
             track->setVolume(AudioStream::BaseRatio, vol);
@@ -358,7 +369,7 @@ void Audio::bgsPlay(const char *filename,
                     int pitch,
                     float pos)
 {
-	p->bgs.play(filename, volume, pitch, pos);
+	p->bgs.play(filename, (volume*p->global_sfx_volume)/100, pitch, pos);
 }
 
 void Audio::bgsStop()
@@ -376,7 +387,8 @@ void Audio::mePlay(const char *filename,
                    int volume,
                    int pitch)
 {
-	p->me.play(filename, volume, pitch);
+
+	p->me.play(filename, (volume*p->global_bgm_volume)/100, pitch);
 }
 
 void Audio::meStop()
@@ -394,7 +406,7 @@ void Audio::sePlay(const char *filename,
                    int volume,
                    int pitch)
 {
-	p->se.play(filename, volume, pitch);
+	p->se.play(filename, (volume*p->global_sfx_volume)/100, pitch);
 }
 
 void Audio::seStop()
@@ -426,6 +438,43 @@ void Audio::reset()
 	p->bgs.stop();
 	p->me.stop();
 	p->se.stop();
+}
+
+int Audio::getGlobalBGM_Volume() const
+{
+	return p->global_bgm_volume;
+}
+
+void Audio::setGlobalBGM_Volume(int value) {
+	if (value > 100) 
+		value = 100;
+	else if (value < 1) 
+		value = 1;
+	for (auto track : p->bgmTracks) {
+		float current_vol = (track->getVolume(AudioStream::Base) * 100.0) / (float)p->global_bgm_volume;
+		float new_vol = current_vol * (value / 100.0);
+		track->setVolume(AudioStream::Base, new_vol);
+	}
+	float me_volume = (p->me.getVolume(AudioStream::Base) * 100.0) / (float) p->global_bgm_volume;
+	p->me.setVolume(AudioStream::Base, ((float)(me_volume * value)) / 100.0);
+
+	p->global_bgm_volume = value;
+}
+
+int Audio::getGlobalSFX_Volume() const {
+	return p->global_sfx_volume;
+}
+
+void Audio::setGlobalSFX_Volume(int value)
+{
+	if (value > 100) 
+		value = 100;
+	else if (value < 1) 
+		value = 1;
+	float bgs_volume = (p->bgs.getVolume(AudioStream::Base) * 100.0) / (float) p->global_sfx_volume;
+	p->bgs.setVolume(AudioStream::Base, ((bgs_volume * value)) / 100.0);
+
+	p->global_sfx_volume = value;
 }
 
 Audio::~Audio() { delete p; }
