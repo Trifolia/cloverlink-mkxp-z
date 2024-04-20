@@ -1,7 +1,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-MKXPZ_HOST=$(gcc -dumpmachine)
-MKXPZ_PREFIX=$(ruby -e "printf ('${MKXPZ_HOST}'[/i686/].nil?) ? 'mingw64' : 'mingw'")
+MKXPZ_PREFIX=$(ruby -e "puts ENV[\"MSYSTEM\"].downcase")
+
 export LDFLAGS="-L$DIR/build-${MKXPZ_PREFIX}/lib -L$DIR/build-${MKXPZ_PREFIX}/bin"
 export CFLAGS="-I$DIR/build-${MKXPZ_PREFIX}/include"
 export PATH="$DIR/build-${MKXPZ_PREFIX}/bin:$PATH"

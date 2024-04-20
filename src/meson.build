@@ -100,6 +100,10 @@ global_include_dirs += include_directories('.',
 global_dependencies += [openal, zlib, bz2, sdl2, sdl_sound, pixman, physfs, theora, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, iconv, uchardet]
 if host_system == 'windows'
     global_dependencies += compilers['cpp'].find_library('wsock32')
+    global_dependencies += compilers['cpp'].find_library('winmm')
+    global_dependencies += compilers['cpp'].find_library('Secur32')
+    global_dependencies += compilers['cpp'].find_library('Shlwapi')
+    global_dependencies += compilers['cpp'].find_library('gdiplus')
 elif host_system == 'linux'
     global_dependencies += dependency('gtk+-3.0')
 endif

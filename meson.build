@@ -195,3 +195,18 @@ executable(exe_name,
     win_subsystem: 'windows',
     install: (host_system != 'windows')
 )
+
+# Shim for Windows
+if host_system == 'windows'
+    executable(
+        meson.project_name() + '-shim',
+        sources: [
+            'windows/shim.c',
+            windows_resources
+        ],
+        link_args: [
+            
+        ],
+        win_subsystem: 'windows'
+    )
+endif

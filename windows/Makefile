@@ -1,11 +1,21 @@
-ARCH := $(shell ruby -e "puts (\`gcc -dumpmachine\`[/i686/].nil?) ? 'mingw64' : 'mingw'")
-RB_PREFIX := $(shell ruby -e "puts ('$(ARCH)' == 'mingw64') ? 'x64-msvcrt' : 'msvcrt'")
+ARCH := $(shell ruby -e "puts ENV[\"MSYSTEM\"].downcase")
+RB_PREFIX := $(shell ruby -e "case '$(ARCH)'; \
+                when 'mingw64'; \
+                  puts 'x64-msvcrt'; \
+                when 'mingw32'; \
+                  puts 'msvcrt'; \
+                when 'ucrt64', 'clang64'; \
+                  puts 'x64-ucrt'; \
+                when 'clang32'; \
+                  puts 'ucrt'; \
+                end \
+							")
 
 SDL_FLAGS := ${SDL_FLAGS}
 SDL2_IMAGE_FLAGS := ${SDL2_IMAGE_FLAGS}
 SDL2_TTF_FLAGS := ${SDL2_TTF_FLAGS}
 OPENAL_FLAGS := ${OPENAL_FLAGS}
-OPENSSL_FLAGS := $(ARCH) ${OPENSSL_FLAGS}
+OPENSSL_FLAGS := mingw64 ${OPENSSL_FLAGS}
 RUBY_FLAGS := ${RUBY_FLAGS}
 
 BUILD_PREFIX := ${PWD}/build-$(ARCH)
@@ -309,8 +319,6 @@ $(BINDIR)/$(RB_PREFIX)-ruby310.dll: $(DOWNLOADS)/ruby/Makefile
 $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	cd $(DOWNLOADS)/ruby; \
 	export $(CONFIGURE_ENV); \
-	export CFLAGS="-flto $$CFLAGS"; \
-	export LDFLAGS="-flto $$LDFLAGS"; \
 	./configure $(CONFIGURE_ARGS) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/configure.ac

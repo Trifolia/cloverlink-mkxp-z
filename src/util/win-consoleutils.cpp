@@ -29,9 +29,12 @@ static int openStdHandle(const DWORD &nStdHandle);
 // setting up the console.
 void reopenWindowsStreams()
 {
-    freopen_s(&outStream, "CONOUT$", "w+", stdout);
-    freopen_s(&errStream, "CONOUT$", "w+", stderr);
-    freopen_s(&inStream, "CONIN$", "r", stdin);
+    // I have. no clue why commenting this out fixes any native calls to write to stdout
+    // and also does not affect ruby writing to stdout
+    // who the fuck knows at this point
+    // freopen_s(&outStream, "CONOUT$", "w+", stdout);
+    // freopen_s(&errStream, "CONOUT$", "w+", stderr);
+    // freopen_s(&inStream, "CONIN$", "r", stdin);
     std::cout.clear();
     std::clog.clear();
     std::cerr.clear();
