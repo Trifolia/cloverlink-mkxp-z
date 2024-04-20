@@ -29,6 +29,11 @@
 #ifdef __ANDROID__
 #include <android/log.h>
 #endif
+#ifdef __WIN32__
+#include <windows.h>
+#include <fcntl.h>
+#include <io.h>
+#endif
 
 
 /* A cheap replacement for qDebug() */
@@ -63,6 +68,11 @@ public:
 	{
 #ifdef __ANDROID__
 		__android_log_write(ANDROID_LOG_DEBUG, "mkxp", buf.str().c_str());
+#elif __WIN32__
+		buf << std::endl;
+		auto str = buf.str();
+ 		const HANDLE handle = GetStdHandle(STD_ERROR_HANDLE);
+		WriteConsoleA(handle, str.c_str(), str.length(), NULL, NULL);
 #else
 		std::cerr << buf.str() << std::endl;
 #endif
