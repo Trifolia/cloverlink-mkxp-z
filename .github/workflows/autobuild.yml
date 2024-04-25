@@ -57,7 +57,7 @@ jobs:
           meson build
           cd build
           ninja
-          strip ./mkxp-z.exe
+          strip ./cloverlink.exe
 
       - name: Prepare archive
         shell: msys2 {0}
