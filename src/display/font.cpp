@@ -475,7 +475,7 @@ void Font::initDynAttribs()
 {
 	p->color = new Color(p->colorTmp);
 
-	if (rgssVer >= 3)
+	// if (rgssVer >= 3)
 		p->outColor = new Color(p->outColorTmp);;
 }
 
