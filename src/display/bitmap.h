@@ -158,7 +158,7 @@ public:
     
 	/* Binds the backing texture and sets the correct
 	 * texture size uniform in shader */
-	void bindTex(ShaderBase &shader);
+	void bindTex(ShaderBase &shader, bool substituteLoresSize = true);
 
 	/* Adds 'rect' to tainted area */
 	void taintArea(const IntRect &rect);
@@ -166,8 +166,6 @@ public:
 	sigslot::signal<> modified;
 
 	static int maxSize();
-    
-    bool invalid() const;
 
     void assumeRubyGC();
 

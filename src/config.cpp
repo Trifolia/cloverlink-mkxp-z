@@ -135,6 +135,10 @@ void Config::read(int argc, char *argv[]) {
         {"fullscreen", false},
         {"fixedAspectRatio", true},
         {"smoothScaling", 0},
+        {"smoothScalingDown", 0},
+        {"bitmapSmoothScaling", 0},
+        {"bitmapSmoothScalingDown", 0},
+        {"smoothScalingMipmaps", false},
         {"bicubicSharpness", 100},
 #ifdef MKXPZ_SSL
         {"xbrzScalingFactor", 1.},
@@ -269,6 +273,10 @@ try { exp } catch (...) {}
     SET_OPT(fullscreen, boolean);
     SET_OPT(fixedAspectRatio, boolean);
     SET_OPT(smoothScaling, integer);
+    SET_OPT(smoothScalingDown, integer);
+    SET_OPT(bitmapSmoothScaling, integer);
+    SET_OPT(bitmapSmoothScalingDown, integer);
+    SET_OPT(smoothScalingMipmaps, boolean);
     SET_OPT(bicubicSharpness, integer);
 #ifdef MKXPZ_SSL
     SET_OPT(xbrzScalingFactor, integer);

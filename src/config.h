@@ -44,6 +44,10 @@ struct Config {
     bool fullscreen;
     bool fixedAspectRatio;
     int smoothScaling;
+    int smoothScalingDown;
+    int bitmapSmoothScaling;
+    int bitmapSmoothScalingDown;
+    bool smoothScalingMipmaps;
     int bicubicSharpness;
 #ifdef MKXPZ_SSL
     double xbrzScalingFactor;
