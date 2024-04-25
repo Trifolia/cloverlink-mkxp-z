@@ -21,4 +21,4 @@ export MKXPZ_PREFIX="$DIR/build-${MKXPZ_PREFIX}"
 
 # Horrifying Ruby cross-compile bug workaround
 MKXPZ_RUBY_PREFIX="$MKXPZ_PREFIX/$MKXPZ_PREFIX"
-cp -a "$MKXPZ_RUBY_PREFIX"/* "$MKXPZ_PREFIX/"
+cp -a -n "$MKXPZ_RUBY_PREFIX"/* "$MKXPZ_PREFIX/"
