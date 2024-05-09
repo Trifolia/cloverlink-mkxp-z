@@ -535,7 +535,7 @@ RB_METHOD(mkxpSystemMemory) {
 RB_METHOD(mkxpReloadPathCache) {
     RB_UNUSED_PARAM;
     
-    shState->fileSystem().reloadPathCache();
+    GUARD_EXC(shState->fileSystem().reloadPathCache(););
     return Qnil;
 }
 
@@ -972,7 +972,11 @@ static void runRMXPScripts(BacktraceData &btData) {
     /* Execute preloaded scripts */
     for (std::vector<std::string>::const_iterator i = conf.preloadScripts.begin();
          i != conf.preloadScripts.end(); ++i)
+    {
+        if (shState->rtData().rqTerm)
+            break;
         runCustomScript(*i);
+    }
     
     VALUE exc = rb_gv_get("$!");
     if (exc != Qnil)
@@ -980,6 +984,9 @@ static void runRMXPScripts(BacktraceData &btData) {
     
     while (true) {
         for (long i = 0; i < scriptCount; ++i) {
+            if (shState->rtData().rqTerm)
+                break;
+            
             VALUE script = rb_ary_entry(scriptArray, i);
             VALUE scriptDecoded = rb_ary_entry(script, 3);
             VALUE string =
